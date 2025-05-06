@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>给姐姐的生日时光胶囊</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #fdf0f5, #f8f9ff);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #5a3d7a;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 开场动画 */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #9c6bae 0%, #e0c3fc 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 1s ease-out;
+        }
+        
+        .loading-text {
+            color: white;
+            font-size: 24px;
+            margin-top: 20px;
+            font-family: 'Cinzel', serif;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 相识纪年 */
+        .time-counter {
+            text-align: center;
+            padding: 50px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+            background: linear-gradient(to right, #ffffff, #f9f0ff);
+            border: 1px solid rgba(154, 128, 172, 0.2);
+        }
+        
+        .counter {
+            font-size: 2.8rem;
+            margin: 20px 0;
+            font-family: 'Cinzel', serif;
+        }
+        
+        .number {
+            font-weight: bold;
+            background: linear-gradient(45deg, #9c6bae, #e0c3fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+            min-width: 80px;
+        }
+        
+        /* 电影部分 */
+        .movie-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            background: linear-gradient(to right, #ffffff, #f9f0ff);
+            border: 1px solid rgba(154, 128, 172, 0.2);
+        }
+        
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .movie-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(154, 128, 172, 0.2);
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .movie-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(154, 128, 172, 0.2);
+        }
+        
+        .movie-info {
+            padding: 20px;
+        }
+        
+        .movie-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: #5a3d7a;
+        }
+        
+        .movie-info p {
+            font-size: 0.95rem;
+            color: #666;
+        }
+        
+        /* 趣味统计 */
+        .fun-stats {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            background: linear-gradient(to right, #ffffff, #f9f0ff);
+            border: 1px solid rgba(154, 128, 172, 0.2);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 25px 15px;
+            background: #fff;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(154, 128, 172, 0.2);
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .stat-number {
+            font-size: 2.8rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #9c6bae, #e0c3fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+            font-family: 'Cinzel', serif;
+        }
+        
+        .stat-desc {
+            font-size: 0.95rem;
+            color: #666;
+        }
+        
+        /* 音乐分享 */
+        .music-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-align: left;
+            background: linear-gradient(to right, #ffffff, #f9f0ff);
+            border: 1px solid rgba(154, 128, 172, 0.2);
+        }
+        
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .music-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(154, 128, 172, 0.2);
+            text-align: left;
+            position: relative;
+        }
+        
+        .music-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .music-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(154, 128, 172, 0.2);
+            mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+        }
+        
+        .music-info {
+            padding: 15px 20px;
+            position: relative;
+            z-index: 1;
+            margin-top: -30px; /* 让文字稍微上移，与图片重叠 */
+            background: linear-gradient(to top, rgba(255,255,255,1) 60%, rgba(255,255,255,0.8) 100%);
+            border-radius: 0 0 12px 12px;
+        }
+        
+        .music-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: #5a3d7a;
+        }
+        
+        .music-info p {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .music-link {
+            display: inline-block;
+            padding: 6px 15px;
+            background: linear-gradient(45deg, #9c6bae, #e0c3fc);
+            color: white;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .music-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(156, 107, 174, 0.3);
+        }
+        
+        /* 抽象时刻 */
+        .abstract-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            background: linear-gradient(to right, #ffffff, #f9f0ff);
+            border: 1px solid rgba(154, 128, 172, 0.2);
+        }
+        
+        .abstract-quotes {
+            margin-top: 30px;
+        }
+        
+        .quote-item {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(154, 128, 172, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quote-item::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, #9c6bae, #e0c3fc);
+        }
+        
+        .quote-text {
+            font-size: 1.1rem;
+            color: #5a3d7a;
+            margin-bottom: 15px;
+            font-style: italic;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .quote-text::before {
+            content: """";
+            position: absolute;
+            left: 0;
+            top: -5px;
+            font-size: 2rem;
+            color: rgba(156, 107, 174, 0.2);
+        }
+        
+        .reaction {
+            font-size: 0.95rem;
+            color: #666;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .reaction::before {
+            content: "—";
+            position: absolute;
+            left: 5px;
+        }
+        
+        /* 结尾寄语 */
+        .ending-message {
+            text-align: center;
+            padding: 50px 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+            background: linear-gradient(to right, #ffffff, #f9f0ff);
+            border: 1px solid rgba(154, 128, 172, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ending-message::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><text x="10" y="50" font-family="Arial" font-size="20" fill="rgba(156, 107, 174, 0.05)">❤</text></svg>');
+            opacity: 0.3;
+            z-index: 0;
+        }
+        
+        .ending-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .signature {
+            font-style: italic;
+            font-size: 1.3rem;
+            margin-top: 30px;
+            color: #9c6bae;
+            font-family: 'Cinzel', serif;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .counter {
+                font-size: 2rem;
+            }
+            
+            .number {
+                min-width: 60px;
+            }
+            
+            .movie-grid, .music-grid, .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .movie-card img {
+                height: 220px;
+            }
+            
+            .music-card img {
+                height: 180px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .chat-bubble {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 开场动画 -->
+    <div class="loading-screen">
+        <div class="spinner"></div>
+        <div class="loading-text">正在生成专属时光报告...</div>
+    </div>
+
+    <div class="container">
+        <!-- 相识纪年 -->
+        <section class="time-counter">
+            <h2>我们的友谊已经持续</h2>
+            <div class="counter">
+                <span class="number" id="days">0</span> 天
+                <span class="number" id="hours">0</span> 小时
+                <span class="number" id="minutes">0</span> 分钟
+                <span class="number" id="seconds">0</span> 秒
+            </div>
+            <p>从<strong>2024年6月29日</strong>第一次相识算起</p>
+        </section>
+
+        <!-- 电影部分 -->
+        <section class="movie-section">
+            <h2>我们一起看过的电影</h2>
+            <p>笑死你敢信我们其实只一起看过四部电影吗</p>
+            
+            <div class="movie-grid">
+                <div class="movie-card" data-date="2024-08-17">
+                    <img src="https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2911307747.webp" alt="电影海报">
+                    <div class="movie-info">
+                        <h3>异形：夺命舰</h3>
+                        <p>2024年8月17日</p>
+                        <p>余光看到你吓得捂住眼睛</p>
+                    </div>
+                </div>
+                
+                <div class="movie-card" data-date="2024-09-06">
+                    <img src="https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2912050605.webp" alt="电影海报">
+                    <div class="movie-info">
+                        <h3>人海同游</h3>
+                        <p>2024年9月6日</p>
+                        <p>你说你快看睡着了</p>
+                    </div>
+                </div>
+                
+                <div class="movie-card" data-date="2024-11-22">
+                    <img src="https://img2.doubanio.com/view/photo/s_ratio_poster/public/p2913943741.webp" alt="电影海报">
+                    <div class="movie-info">
+                        <h3>角斗士 II</h3>
+                        <p>2024年11月22日</p>
+                        <p>电影结束继续讨论电影的逆天设定</p>
+                    </div>
+                </div>
+                
+                <div class="movie-card" data-date="2025-04-25">
+                    <img src="https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2916278113.webp" alt="电影海报">
+                    <div class="movie-info">
+                        <h3>摇滚诗人：未知的传奇</h3>
+                        <p>2025年4月25日</p>
+                        <p>给没了解过鲍勃·迪伦的你极大的震撼</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 趣味统计 -->
+        <section class="fun-stats">
+            <h2>关于我们的数字</h2>
+            <p>这些数字背后，是我们共同的回忆</p>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">13</div>
+                    <div class="stat-desc">次深夜畅谈你还记得我们聊了什么</div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-number">69</div>
+                    <div class="stat-desc">天后我们才知道对方的名字</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">77</div>
+                    <div class="stat-desc">天后你才被动发现第一次见我时我是戴了眼镜的</div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-number">327</div>
+                    <div class="stat-desc">是你搞抽象的次数</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 音乐分享 -->
+        <section class="music-section">
+            <h2>我们的音乐记忆</h2>
+            <p>这些旋律记录了我们共同的时光</p>
+            
+            <div class="music-grid">
+                <div class="music-card">
+                    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/ba/61/bc/ba61bcaf-2034-f13e-6f66-fdb578d618dc/656605609966.jpg/600x600bb.jpg" alt="专辑封面">
+                    <div class="music-info">
+                        <h3>Should Have Known Better</h3>
+                        <p>Sufjan Stevens · Carrie & Lowell</p>
+                        <p>"想起了 Mystery of Love "</p>
+                        <a href="https://music.163.com/song?id=30841781" class="music-link" target="_blank">网易云收听</a>
+                    </div>
+                </div>
+                
+                <div class="music-card">
+                    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/bd/59/2e/bd592e8a-a82c-7fc8-061c-a8126108907b/4525853125091.jpg/600x600bb.jpg" alt="专辑封面">
+                    <div class="music-info">
+                        <h3>Episode 33</h3>
+                        <p>She Her Her Hers · location</p>
+                        <p>"原来动次打次就是 rnb 吗"</p>
+                        <a href="https://music.163.com/song?id=1400424646" class="music-link" target="_blank">网易云收听</a>
+                    </div>
+                </div>
+
+                <div class="music-card">
+                    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/63/11/e5/6311e5e0-fb79-f5ff-746e-7af4c08eb353/21UMGIM67645.rgb.jpg/600x600bb.jpg" alt="专辑封面">
+                    <div class="music-info">
+                        <h3>Résumé</h3>
+                        <p>Jenevieve · Division</p>
+                        <p>"原来动次打次就是 rnb 吗"</p>
+                        <a href="https://music.163.com/song?id=1875170396" class="music-link" target="_blank">网易云收听</a>
+                    </div>
+                </div>
+                
+                <div class="music-card">
+                    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/09/08/15/090815b5-4f78-b38d-5255-11e73eb61c19/11UMGIM52811.rgb.jpg/600x600bb.jpg" alt="专辑封面">
+                    <div class="music-info">
+                        <h3>Summertime Sadness</h3>
+                        <p>Lana Del Rey · Born to Die (Deluxe Version)</p>
+                        <p>"慵懒醇厚有故事"</p>
+                        <a href="https://music.163.com/song?id=16593589" class="music-link" target="_blank">网易云收听</a>
+                    </div>
+                </div>
+                
+                <div class="music-card">
+                    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/3c/74/c7/3c74c7e0-959d-d277-71b9-cfe7b191e0e7/artwork.jpg/600x600bb.jpg" alt="专辑封面">
+                    <div class="music-info">
+                        <h3>underground Blossom</h3>
+                        <p>Victor Butzelaar · Underground Blossom (Original Game Soundtrack)</p>
+                        <p>"宿命和悲剧感"</p>
+                        <a href="https://music.163.com/song?id=2086936103" class="music-link" target="_blank">网易云收听</a>
+                    </div>
+                </div>
+
+                <div class="music-card">
+                    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/600x600bb.jpg" alt="专辑封面">
+                    <div class="music-info">
+                        <h3>Sweet Child O' Mine</h3>
+                        <p> Guns N' Roses · Appetite For Destruction</p>
+                        <p>"是清爽得像冰镇乳酸菌饮料的前奏"</p>
+                        <a href="https://music.163.com/song?id=18095043" class="music-link" target="_blank">网易云收听</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 抽象时刻 -->
+        <section class="abstract-section">
+            <h2>抽象大师时刻</h2>
+            <p>前无古人后无来者无人能及</p>
+            
+            <div class="abstract-quotes">
+                <div class="quote-item">
+                    <p class="quote-text">"蒙✌V我一顶蒙古包。"</p>
+                    <p class="reaction">"?"</p>
+                </div>
+                
+                <div class="quote-item">
+                    <p class="quote-text">"我不需要。我都是随地大小便的。"</p>
+                    <p class="reaction">"?"</p>
+                </div>
+                
+                <div class="quote-item">
+                    <p class="quote-text">"'你也不想上课自摸的事情被大家知道吧'"</p>
+                    <p class="reaction">"?"</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 结尾寄语 -->
+        <section class="ending-message">
+            <div class="ending-content">
+                <h2>致姐姐</h2>
+                <p>感谢你出现在我的生命中，成为我一位珍贵的朋友。</p>
+                <p>从我们相识的第一天起，你就用你的抽象主义点亮了我的世界。那些无厘头的笑话、深夜的高知识密度长谈、你方惨败的游戏，都成为了我最珍视的回忆。</p>
+                <p>未来的路还很长，却不一定能继续与你同行。但我们都看过机器人之梦，你我相伴的那段过去将成为我们的一部分，我也许不再在你身边，但我从未离开你。（笑死有点恐怖）</p>
+                <p>生日快乐！愿你的每一天都如今天般灿烂，愿我们的友谊历久弥新。</p>
+                <p class="signature">嘉伟</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 开场动画
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.querySelector('.loading-screen').style.opacity = '0';
+                setTimeout(function() {
+                    document.querySelector('.loading-screen').style.display = 'none';
+                    
+                    // 显示所有部分
+                    const sections = document.querySelectorAll('section');
+                    sections.forEach((section, index) => {
+                        setTimeout(() => {
+                            section.classList.add('visible');
+                        }, index * 200);
+                    });
+                    
+                    // 聊天泡泡动画
+                    const chatBubbles = document.querySelectorAll('.chat-bubble');
+                    chatBubbles.forEach((bubble, index) => {
+                        setTimeout(() => {
+                            bubble.style.animation = `fadeIn 0.5s ease ${index * 0.2}s forwards`;
+                        }, index * 200);
+                    });
+                    
+                }, 1000);
+            }, 2000);
+        });
+        
+        // 计算友谊时长
+        function updateFriendshipDuration() {
+            const startDate = new Date('2024-06-29');
+            const now = new Date();
+            
+            const diffTime = Math.abs(now - startDate);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); 
+            const diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+            const diffSeconds = Math.floor((diffTime % (1000 * 60)) / 1000);
+            
+            // 数字滚动动画
+            document.getElementById('days').textContent = diffDays;
+            document.getElementById('hours').textContent = diffHours;
+            document.getElementById('minutes').textContent = diffMinutes;
+            document.getElementById('seconds').textContent = diffSeconds;
+        }
+        
+        // 数字滚动动画函数
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+        
+        // 初始化并每秒更新
+        updateFriendshipDuration();
+        setInterval(updateFriendshipDuration, 1000);
+        
+        // 滚动动画
+        window.addEventListener('scroll', function() {
+            const scrollPosition = window.scrollY;
+            const windowHeight = window.innerHeight;
+            
+            document.querySelectorAll('section').forEach(section => {
+                const sectionTop = section.offsetTop;
+                
+                if (scrollPosition > sectionTop - windowHeight + 100) {
+                    section.classList.add('visible');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
